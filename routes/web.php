@@ -47,18 +47,5 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-Route::get('/buat-admin', function () {
-    try {
-        $user = App\Models\User::create([
-            'name' => 'Administrator',
-            'email' => 'admin@rebutan.com',
-            'password' => bcrypt('admin123')
-        ]);
-        
-        return "Sukses! Admin telah dibuat. Email: admin@rebutan.com, Password: admin123";
-    } catch (\Exception $e) {
-        return "Error: " . $e->getMessage();
-    }
-});
 
 require __DIR__.'/auth.php';
