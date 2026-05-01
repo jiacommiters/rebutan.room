@@ -50,7 +50,25 @@ Route::middleware('auth')->group(function () {
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
+Route::get('/create-super-admin', function () {
+    // Cek apakah super admin sudah ada (berdasarkan email)
+    $exists = User::where('email', 'admin@example.com')->exists();
 
+    if ($exists) {
+        return 'Super admin sudah ada!';
+    }
+
+    User::create([
+        'name'       => 'Super Admin',
+        'email'      => 'admin@admin.telkomuniversity.ac.id',
+        'password'   => Hash::make('password123'), // ganti dengan password kuat
+        'role'       => 'super_admin',
+        'nim_nip'    => '9999999999', // isi sesuai kebutuhan
+        'id_cabang'  => null,       // atau isi jika foreign key wajib
+        'id_fakultas'=> null,
+    ]);
+    return 'Super admin pertama baru aja gw buat';
+});
 
 
 require __DIR__.'/auth.php';
