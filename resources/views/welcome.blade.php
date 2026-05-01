@@ -29,7 +29,7 @@
             @if (Route::has('login'))
                 <div class="flex gap-4">
                     @auth
-                        <a href="{{ url('/dashboard') }}" class="px-5 py-2 rounded-full font-medium transition-all hover:bg-gray-100 dark:hover:bg-gray-800">Dashboard</a>
+                        <a href="{{ route('dashboard') }}" class="px-5 py-2 rounded-full font-medium transition-all hover:bg-gray-100 dark:hover:bg-gray-800">Dashboard</a>
                     @else
                         <a href="{{ route('login') }}" class="px-5 py-2 rounded-full font-medium transition-all hover:bg-gray-100 dark:hover:bg-gray-800">Masuk</a>
                         @if (Route::has('register'))

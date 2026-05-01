@@ -21,6 +21,23 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
+            @if(!Auth::user()->isAdmin() && (session('onboarding_profile_notice') || empty(Auth::user()->id_fakultas)))
+                <div class="glass-card rounded-2xl p-5 border-l-4 border-l-amber-500 bg-amber-50/60 dark:bg-amber-900/10">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                        <div>
+                            <p class="font-semibold text-amber-800 dark:text-amber-300">
+                                Lengkapi profil Anda (opsional)
+                            </p>
+                            <p class="text-sm text-amber-700/90 dark:text-amber-200/80 mt-1">
+                                Anda bisa menambahkan fakultas di halaman Profile agar data akun lebih lengkap.
+                            </p>
+                        </div>
+                        <a href="{{ route('profile.edit') }}" class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-semibold text-white bg-amber-500 hover:bg-amber-600 transition-colors shadow">
+                            Buka Profile
+                        </a>
+                    </div>
+                </div>
+            @endif
 
             {{-- ============ STATISTIK CARDS ============ --}}
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">

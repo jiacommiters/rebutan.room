@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Fakultas;
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -18,6 +19,9 @@ class ProfileController extends Controller
     {
         return view('profile.edit', [
             'user' => $request->user(),
+            'fakultas' => Fakultas::with('cabang')
+                ->orderBy('nama_fakultas')
+                ->get(),
         ]);
     }
 
@@ -26,7 +30,18 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $data = $request->validated();
+
+        // Sinkronisasi id_cabang berdasarkan fakultas yang dipilih (opsional).
+        if (!empty($data['id_fakultas'])) {
+            $fakultas = Fakultas::find($data['id_fakultas']);
+            $data['id_cabang'] = $fakultas?->id_cabang;
+        } else {
+            $data['id_cabang'] = null;
+            $data['id_fakultas'] = null;
+        }
+
+        $request->user()->fill($data);
 
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;

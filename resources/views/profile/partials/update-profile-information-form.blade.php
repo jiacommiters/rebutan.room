@@ -47,6 +47,25 @@
             @endif
         </div>
 
+        <div>
+            <x-input-label for="nim_nip" :value="__('NIM / NIP')" />
+            <x-text-input id="nim_nip" name="nim_nip" type="text" class="mt-1 block w-full" :value="old('nim_nip', $user->nim_nip)" autocomplete="off" />
+            <x-input-error class="mt-2" :messages="$errors->get('nim_nip')" />
+        </div>
+
+        <div>
+            <x-input-label for="id_fakultas" :value="__('Fakultas (Opsional)')" />
+            <select id="id_fakultas" name="id_fakultas" class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 rounded-md">
+                <option value="">Belum dipilih</option>
+                @foreach($fakultas as $f)
+                    <option value="{{ $f->id_fakultas }}" @selected((string) old('id_fakultas', $user->id_fakultas) === (string) $f->id_fakultas)>
+                        {{ $f->nama_fakultas }} ({{ $f->cabang->nama_cabang ?? '-' }})
+                    </option>
+                @endforeach
+            </select>
+            <x-input-error class="mt-2" :messages="$errors->get('id_fakultas')" />
+        </div>
+
         <div class="flex items-center gap-4">
             <x-primary-button>{{ __('Save') }}</x-primary-button>
 

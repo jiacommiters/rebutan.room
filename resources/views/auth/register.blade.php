@@ -34,25 +34,15 @@
             <x-input-error :messages="$errors->get('role')" class="mt-2" />
         </div>
 
-        <!-- Fakultas -->
-        <div class="mt-4">
-            <x-input-label for="id_fakultas" :value="__('Fakultas')" />
-            <select id="id_fakultas" name="id_fakultas" class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 rounded-md" required>
-                <option value="">Pilih Fakultas</option>
-                @foreach($fakultas as $f)
-                    <option value="{{ $f->id_fakultas }}" @selected((string) old('id_fakultas') === (string) $f->id_fakultas)>
-                        {{ $f->nama_fakultas }} ({{ $f->cabang->nama_cabang ?? '-' }})
-                    </option>
-                @endforeach
-            </select>
-            <x-input-error :messages="$errors->get('id_fakultas')" class="mt-2" />
-        </div>
+        <p class="mt-4 text-xs text-gray-500 dark:text-gray-400">
+            Info: Fakultas bisa dipilih setelah berhasil register melalui menu Profile (opsional).
+        </p>
 
         <!-- Password -->
         <div class="mt-4">
             <x-input-label for="password" :value="__('Password')" />
 
-            <x-text-input id="password" class="block mt-1 w-full"
+            <x-text-input id="password " class="block mt-1 w-full"
                             type="password"
                             name="password"
                             required autocomplete="new-password" />

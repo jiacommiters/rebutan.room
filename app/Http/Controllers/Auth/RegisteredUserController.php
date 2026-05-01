@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\Fakultas;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -22,11 +21,7 @@ class RegisteredUserController extends Controller
     public function create(): View
     {
         // Super admin/admin dibuat melalui panel CRUD, registrasi publik hanya untuk mahasiswa/dosen/staff.
-        return view('auth.register', [
-            'fakultas' => Fakultas::with('cabang')
-                ->orderBy('nama_fakultas')
-                ->get(),
-        ]);
+        return view('auth.register');
     }
 
     /**
@@ -41,13 +36,10 @@ class RegisteredUserController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
 
-            // Business rules user: tiap pengguna punya identitas akademik & afiliasi kampus.
+            // Registrasi publik hanya akun peminjam.
             'role' => ['required', 'in:mahasiswa,dosen,staff'],
             'nim_nip' => ['required', 'string', 'max:100'],
-            'id_fakultas' => ['required', 'exists:fakultas,id_fakultas'],
         ]);
-
-        $fakultas = Fakultas::findOrFail($request->id_fakultas);
 
         $user = User::create([
             'name' => $request->name,
@@ -56,14 +48,16 @@ class RegisteredUserController extends Controller
 
             'role' => $request->role,
             'nim_nip' => $request->nim_nip,
-            'id_fakultas' => $fakultas->id_fakultas,
-            'id_cabang' => $fakultas->id_cabang, // lokasi kampus (sesuai relasi fakultas)
+            // Fakultas dipilih setelah registrasi di halaman profile (opsional).
+            'id_fakultas' => null,
+            'id_cabang' => null,
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect(route('dashboard', absolute: false))
+            ->with('onboarding_profile_notice', true);
     }
 }
