@@ -11,13 +11,11 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
 
-            // default breeze
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
 
-            // 🔥 TAMBAHAN DARI SISTEM KITA
             $table->unsignedBigInteger('id_cabang')->nullable();
             $table->unsignedBigInteger('id_fakultas')->nullable();    
             $table->foreign('id_cabang')->references('id_cabang')->on('cabang');
