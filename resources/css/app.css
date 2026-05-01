@@ -22,6 +22,35 @@
     .text-gradient {
         @apply bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-rose-400 dark:from-red-500 dark:to-rose-300;
     }
+
+    /* Responsive Table Utilities */
+    @media (max-width: 768px) {
+        .mobile-stacked-table {
+            @apply block w-full;
+        }
+        .mobile-stacked-table thead {
+            @apply hidden;
+        }
+        .mobile-stacked-table tbody {
+            @apply block w-full divide-y-0 space-y-4 bg-transparent dark:bg-transparent;
+        }
+        .mobile-stacked-table tr {
+            @apply block w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm p-4 transition-colors;
+        }
+        .mobile-stacked-table td {
+            @apply flex flex-col items-start px-0 py-2 border-b border-gray-100 dark:border-gray-700/50 last:border-0 text-left w-full;
+        }
+        .mobile-stacked-table td::before {
+            content: attr(data-label);
+            @apply text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1 block;
+        }
+        .mobile-stacked-table td.actions-cell {
+            @apply flex-row justify-end gap-3 pt-3 mt-1 border-t border-gray-100 dark:border-gray-700/50;
+        }
+        .mobile-stacked-table td.actions-cell::before {
+            @apply hidden;
+        }
+    }
 }
 
 @keyframes blob {

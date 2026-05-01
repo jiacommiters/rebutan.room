@@ -42,7 +42,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div class="bg-white dark:bg-gray-800 shadow rounded-xl p-6 overflow-x-auto">
                     <h3 class="text-lg font-semibold mb-3">Jumlah Pemakain per Fakultas (Approved)</h3>
-                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm mobile-stacked-table">
                         <thead class="text-left bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
                             <tr>
                                 <th class="px-3 py-2">Fakultas/Unit</th>
@@ -52,8 +52,8 @@
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                             @forelse($facultyStats as $row)
                                 <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                                    <td class="px-3 py-2">{{ $row->nama_fakultas ?? 'Umum' }}</td>
-                                    <td class="px-3 py-2 font-medium">{{ $row->jumlah_peminjaman }}</td>
+                                    <td class="px-3 py-2" data-label="Fakultas/Unit">{{ $row->nama_fakultas ?? 'Umum' }}</td>
+                                    <td class="px-3 py-2 font-medium" data-label="Jumlah Peminjaman">{{ $row->jumlah_peminjaman }}</td>
                                 </tr>
                             @empty
                                 <tr>
@@ -66,7 +66,7 @@
 
                 <div class="bg-white dark:bg-gray-800 shadow rounded-xl p-6 overflow-x-auto">
                     <h3 class="text-lg font-semibold mb-3">Penggunaan per Tipe Ruangan (Approved)</h3>
-                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm mobile-stacked-table">
                         <thead class="text-left bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
                             <tr>
                                 <th class="px-3 py-2">Tipe Ruangan</th>
@@ -76,8 +76,8 @@
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                             @forelse($roomTypeStats as $row)
                                 <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                                    <td class="px-3 py-2">{{ $row->tipe_ruangan }}</td>
-                                    <td class="px-3 py-2 font-medium">{{ $row->jumlah_penggunaan_ruangan }}</td>
+                                    <td class="px-3 py-2" data-label="Tipe Ruangan">{{ $row->tipe_ruangan }}</td>
+                                    <td class="px-3 py-2 font-medium" data-label="Jumlah Penggunaan">{{ $row->jumlah_penggunaan_ruangan }}</td>
                                 </tr>
                             @empty
                                 <tr>
@@ -93,7 +93,7 @@
                 <div class="flex items-center justify-between gap-3 mb-3">
                     <h3 class="text-lg font-semibold">Riwayat Peminjaman (Approved) pada Periode</h3>
                 </div>
-                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm mobile-stacked-table">
                     <thead class="text-left bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
                         <tr>
                             <th class="px-3 py-2">ID</th>
@@ -105,17 +105,17 @@
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                         @forelse($history as $item)
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                                <td class="px-3 py-2">#{{ $item->id_peminjaman }}</td>
-                                <td class="px-3 py-2">
+                                <td class="px-3 py-2" data-label="ID">#{{ $item->id_peminjaman }}</td>
+                                <td class="px-3 py-2" data-label="Pemohon">
                                     <div class="font-medium">{{ $item->user->name ?? '-' }}</div>
                                     <div class="text-gray-500 text-xs">{{ $item->user->email ?? '' }}</div>
                                 </td>
-                                <td class="px-3 py-2">
+                                <td class="px-3 py-2" data-label="Waktu">
                                     <div>{{ \Carbon\Carbon::parse($item->waktu_mulai)->format('d M y, H:i') }}</div>
                                     <div class="text-gray-500 text-xs">s/d {{ \Carbon\Carbon::parse($item->waktu_selesai)->format('d M y, H:i') }}</div>
                                 </td>
-                                <td class="px-3 py-2">
-                                    <div class="flex flex-col gap-1">
+                                <td class="px-3 py-2" data-label="Ruangan">
+                                    <div class="flex flex-col gap-1 items-start">
                                         @foreach($item->ruangan as $r)
                                             <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-semibold bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-600">
                                                 {{ $r->nama_ruangan }} ({{ $r->tipe_ruangan }})

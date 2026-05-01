@@ -15,7 +15,7 @@
             @endif
 
             <div class="bg-white dark:bg-gray-800 shadow rounded-xl overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm mobile-stacked-table">
                     <thead class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
                         <tr>
                             <th class="px-4 py-3 text-left">Nama</th>
@@ -29,12 +29,12 @@
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                         @forelse($ruangan as $item)
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                                <td class="px-4 py-3">{{ $item->nama_ruangan }}</td>
-                                <td class="px-4 py-3">{{ $item->tipe_ruangan }}</td>
-                                <td class="px-4 py-3">{{ $item->nomor_ruangan }}</td>
-                                <td class="px-4 py-3">{{ $item->gedung->nama_gedung ?? '-' }}</td>
-                                <td class="px-4 py-3">{{ $item->kapasitas }}</td>
-                                <td class="px-4 py-3 text-right">
+                                <td class="px-4 py-3" data-label="Nama">{{ $item->nama_ruangan }}</td>
+                                <td class="px-4 py-3" data-label="Tipe">{{ $item->tipe_ruangan }}</td>
+                                <td class="px-4 py-3" data-label="Nomor">{{ $item->nomor_ruangan }}</td>
+                                <td class="px-4 py-3" data-label="Gedung">{{ $item->gedung->nama_gedung ?? '-' }}</td>
+                                <td class="px-4 py-3" data-label="Kapasitas">{{ $item->kapasitas }}</td>
+                                <td class="px-4 py-3 text-right actions-cell" data-label="Aksi">
                                     <a href="{{ route('super-admin.ruangan.edit', $item) }}" class="text-blue-600 hover:underline">Edit</a>
                                     <form action="{{ route('super-admin.ruangan.destroy', $item) }}" method="POST" class="inline" onsubmit="return confirm('Hapus ruangan ini?');">
                                         @csrf

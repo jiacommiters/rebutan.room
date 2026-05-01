@@ -15,7 +15,7 @@
             @endif
 
             <div class="bg-white dark:bg-gray-800 shadow rounded-xl overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm mobile-stacked-table">
                     <thead class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
                         <tr>
                             <th class="px-4 py-3 text-left">Nama Kampus</th>
@@ -25,8 +25,8 @@
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                         @forelse($kampus as $item)
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                                <td class="px-4 py-3">{{ $item->nama_kampus }}</td>
-                                <td class="px-4 py-3 text-right">
+                                <td class="px-4 py-3" data-label="Nama Kampus">{{ $item->nama_kampus }}</td>
+                                <td class="px-4 py-3 text-right actions-cell" data-label="Aksi">
                                     <a href="{{ route('super-admin.kampus.edit', $item) }}" class="text-blue-600 hover:underline">Edit</a>
                                     <form action="{{ route('super-admin.kampus.destroy', $item) }}" method="POST" class="inline" onsubmit="return confirm('Hapus kampus ini?');">
                                         @csrf
