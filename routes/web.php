@@ -60,10 +60,10 @@ Route::get('/create-super-admin', function () {
 
     User::create([
         'name'       => 'Super Admin',
-        'email'      => 'admin@example.com',
+        'email'      => 'admin@admin.telkomuniversity.ac.id',
         'password'   => Hash::make('password123'), // ganti dengan password kuat
         'role'       => 'super_admin',
-        'nim_nip'    => '00000000', // isi sesuai kebutuhan
+        'nim_nip'    => '9999999999', // isi sesuai kebutuhan
         'id_cabang'  => null,       // atau isi jika foreign key wajib
         'id_fakultas'=> null,
     ]);
