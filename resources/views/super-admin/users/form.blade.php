@@ -65,8 +65,11 @@
                         </div>
                     </div>
 
+                    {{-- ===== AFILIASI SECTION ===== --}}
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
+
+                        {{-- Cabang: tampil untuk super_admin / role umum (readonly, diisi otomatis) --}}
+                        <div id="field-cabang">
                             <x-input-label for="id_cabang" value="Cabang" />
                             <select name="id_cabang" id="id_cabang" class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 rounded-md">
                                 <option value="">-</option>
@@ -74,8 +77,12 @@
                                     <option value="{{ $item->id_cabang }}" @selected((string) old('id_cabang', $user->id_cabang) === (string) $item->id_cabang)>{{ $item->nama_cabang }}</option>
                                 @endforeach
                             </select>
+                            <p id="hint-cabang" class="mt-1 text-xs text-gray-500 dark:text-gray-400 hidden">Diisi otomatis dari Fakultas / Gedung yang dipilih.</p>
+                            <x-input-error :messages="$errors->get('id_cabang')" class="mt-2" />
                         </div>
-                        <div>
+
+                        {{-- Fakultas: tampil untuk mahasiswa/dosen/staff dan admin-fakultas --}}
+                        <div id="field-fakultas">
                             <x-input-label for="id_fakultas" value="Fakultas" />
                             <select name="id_fakultas" id="id_fakultas" class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 rounded-md">
                                 <option value="">-</option>
@@ -83,8 +90,12 @@
                                     <option value="{{ $item->id_fakultas }}" @selected((string) old('id_fakultas', $user->id_fakultas) === (string) $item->id_fakultas)>{{ $item->nama_fakultas }}</option>
                                 @endforeach
                             </select>
+                            <p id="hint-fakultas" class="mt-1 text-xs text-gray-500 dark:text-gray-400 hidden">Diisi otomatis dari Gedung yang dipilih.</p>
+                            <x-input-error :messages="$errors->get('id_fakultas')" class="mt-2" />
                         </div>
-                        <div>
+
+                        {{-- Gedung: tampil untuk admin-gedung --}}
+                        <div id="field-gedung">
                             <x-input-label for="id_gedung" value="Gedung" />
                             <select name="id_gedung" id="id_gedung" class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 rounded-md">
                                 <option value="">-</option>
@@ -92,7 +103,9 @@
                                     <option value="{{ $item->id_gedung }}" @selected((string) old('id_gedung', $user->id_gedung) === (string) $item->id_gedung)>{{ $item->nama_gedung }}</option>
                                 @endforeach
                             </select>
+                            <x-input-error :messages="$errors->get('id_gedung')" class="mt-2" />
                         </div>
+
                     </div>
 
                     <div class="pt-2 flex items-center gap-3">
@@ -103,4 +116,80 @@
             </div>
         </div>
     </div>
+
+    {{-- ===== JAVASCRIPT: show/hide field berdasarkan role & admin_level ===== --}}
+    <script>
+        const roleSelect       = document.getElementById('role');
+        const adminLevelSelect = document.getElementById('admin_level');
+
+        const fieldCabang   = document.getElementById('field-cabang');
+        const fieldFakultas = document.getElementById('field-fakultas');
+        const fieldGedung   = document.getElementById('field-gedung');
+
+        const hintCabang    = document.getElementById('hint-cabang');
+        const hintFakultas  = document.getElementById('hint-fakultas');
+
+        const selectCabang   = document.getElementById('id_cabang');
+        const selectFakultas = document.getElementById('id_fakultas');
+        const selectGedung   = document.getElementById('id_gedung');
+
+        function applyVisibility() {
+            const role  = roleSelect.value;
+            const level = adminLevelSelect.value;
+
+            // ── Reset semua ke visible dulu ──────────────────────────────────
+            [fieldCabang, fieldFakultas, fieldGedung].forEach(el => el.style.display = '');
+            [selectCabang, selectFakultas, selectGedung].forEach(el => el.removeAttribute('disabled'));
+            [hintCabang, hintFakultas].forEach(el => el.classList.add('hidden'));
+
+            // ── Super Admin ──────────────────────────────────────────────────
+            if (role === 'super_admin') {
+                // Hanya perlu cabang (opsional), sembunyikan fakultas & gedung
+                fieldFakultas.style.display = 'none';
+                fieldGedung.style.display   = 'none';
+                selectFakultas.setAttribute('disabled', 'disabled');
+                selectGedung.setAttribute('disabled', 'disabled');
+                return;
+            }
+
+            // ── Mahasiswa / Dosen / Staff ────────────────────────────────────
+            if (['mahasiswa', 'dosen', 'staff'].includes(role)) {
+                // Wajib pilih fakultas. Cabang diisi otomatis oleh controller.
+                fieldGedung.style.display = 'none';
+                selectGedung.setAttribute('disabled', 'disabled');
+
+                // Cabang tetap tampil tapi readonly (controller override)
+                hintCabang.classList.remove('hidden');
+                return;
+            }
+
+            // ── Admin ────────────────────────────────────────────────────────
+            if (role === 'admin') {
+                if (level === 'fakultas') {
+                    // Wajib pilih fakultas. Cabang & Gedung diisi otomatis.
+                    fieldGedung.style.display = 'none';
+                    selectGedung.setAttribute('disabled', 'disabled');
+
+                    hintCabang.classList.remove('hidden');
+                    return;
+                }
+
+                if (level === 'gedung') {
+                    // Wajib pilih gedung. Fakultas & Cabang diisi otomatis dari gedung.
+                    hintCabang.classList.remove('hidden');
+                    hintFakultas.classList.remove('hidden');
+                    return;
+                }
+
+                // level kosong / super → tampilkan semua
+                return;
+            }
+        }
+
+        roleSelect.addEventListener('change', applyVisibility);
+        adminLevelSelect.addEventListener('change', applyVisibility);
+
+        // Inisialisasi saat halaman dimuat
+        applyVisibility();
+    </script>
 </x-app-layout>

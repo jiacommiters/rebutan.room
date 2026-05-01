@@ -30,7 +30,7 @@
                         <div>
                             <x-input-label for="kategori" value="Kategori Gedung" />
                             <select name="kategori" id="kategori" class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 rounded-md" required>
-                                @foreach(['umum' => 'Gedung kuliah umum (umum)', 'fakultas' => 'Gedung khusus (fakultas)'] as $value => $label)
+                                @foreach(['umum' => 'Gedung Kuliah Umum (umum)', 'fakultas' => 'Gedung Khusus Fakultas (fakultas)'] as $value => $label)
                                     <option value="{{ $value }}" @selected((string) old('kategori', $item->kategori) === (string) $value)>
                                         {{ $label }}
                                     </option>
@@ -60,16 +60,24 @@
                             <x-input-error :messages="$errors->get('jumlah_lantai')" class="mt-2" />
                         </div>
 
-                        <div class="md:col-span-2">
-                            <x-input-label for="id_fakultas" value="Fakultas (khusus kategori fakultas)" />
+                        {{-- ===== FAKULTAS SECTION: hanya tampil jika kategori=fakultas ===== --}}
+                        <div class="md:col-span-2" id="fakultas-section">
+                            <x-input-label for="id_fakultas" value="Fakultas" />
                             <select name="id_fakultas" id="id_fakultas" class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 rounded-md">
-                                <option value="">- (opsional)</option>
+                                <option value="">-- Pilih Fakultas --</option>
                                 @foreach($fakultas as $f)
-                                    <option value="{{ $f->id_fakultas }}" @selected((string) old('id_fakultas', $item->id_fakultas) === (string) $f->id_fakultas)>
-                                        {{ $f->nama_fakultas }} ({{ $f->cabang->nama_cabang ?? '-' }})
+                                    <option
+                                        value="{{ $f->id_fakultas }}"
+                                        data-cabang="{{ $f->id_cabang }}"
+                                        @selected((string) old('id_fakultas', $item->id_fakultas) === (string) $f->id_fakultas)
+                                    >
+                                        {{ $f->nama_fakultas }} &mdash; {{ $f->cabang->nama_cabang ?? '-' }}
                                     </option>
                                 @endforeach
                             </select>
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                Pilih cabang terlebih dahulu agar opsi fakultas terfilter.
+                            </p>
                             <x-input-error :messages="$errors->get('id_fakultas')" class="mt-2" />
                         </div>
                     </div>
@@ -82,5 +90,62 @@
             </div>
         </div>
     </div>
-</x-app-layout>
 
+    {{-- ===== JAVASCRIPT: toggle & filter fakultas ===== --}}
+    <script>
+        const kategoriSelect  = document.getElementById('kategori');
+        const cabangSelect    = document.getElementById('id_cabang');
+        const fakultasSection = document.getElementById('fakultas-section');
+        const fakultasSelect  = document.getElementById('id_fakultas');
+
+        /** Sembunyikan / tampilkan section fakultas berdasarkan nilai kategori */
+        function toggleFakultasSection() {
+            if (kategoriSelect.value === 'fakultas') {
+                fakultasSection.style.display = '';
+                fakultasSelect.removeAttribute('disabled');
+            } else {
+                fakultasSection.style.display = 'none';
+                fakultasSelect.setAttribute('disabled', 'disabled');
+                fakultasSelect.value = '';   // reset pilihan agar tidak terkirim
+            }
+        }
+
+        /**
+         * Filter opsi fakultas berdasarkan cabang yang dipilih.
+         * Setiap <option> punya data-cabang="{{ $f->id_cabang }}"
+         */
+        function filterFakultasByCabang(preserveSelected) {
+            const selectedCabang = cabangSelect.value;
+            const options = fakultasSelect.querySelectorAll('option[data-cabang]');
+            let hasVisible = false;
+
+            options.forEach(opt => {
+                const match = (opt.getAttribute('data-cabang') === selectedCabang);
+                opt.style.display = match ? '' : 'none';
+                if (match) hasVisible = true;
+
+                // Jika opsi yang sedang terpilih bukan dari cabang ini, kosongkan pilihan
+                if (!preserveSelected && opt.selected && !match) {
+                    opt.selected = false;
+                    fakultasSelect.value = '';
+                }
+            });
+
+            // Jika tidak ada fakultas untuk cabang ini, tampilkan hint
+            const emptyOpt = fakultasSelect.querySelector('option[value=""]');
+            if (emptyOpt) {
+                emptyOpt.textContent = hasVisible
+                    ? '-- Pilih Fakultas --'
+                    : '-- Tidak ada fakultas untuk cabang ini --';
+            }
+        }
+
+        // ── Event listeners ──────────────────────────────────────────────────
+        kategoriSelect.addEventListener('change', toggleFakultasSection);
+        cabangSelect.addEventListener('change', () => filterFakultasByCabang(false));
+
+        // ── Inisialisasi saat halaman dimuat ─────────────────────────────────
+        toggleFakultasSection();
+        filterFakultasByCabang(true); // preserve selected (penting untuk mode edit)
+    </script>
+</x-app-layout>

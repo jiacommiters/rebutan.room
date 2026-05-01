@@ -111,7 +111,7 @@ class GedungManagementController extends Controller
             $fakultas = Fakultas::findOrFail($data['id_fakultas']);
             if ((int) $fakultas->id_cabang !== (int) $data['id_cabang']) {
                 throw ValidationException::withMessages([
-                    'id_fakultas' => 'id_fakultas harus berasal dari cabang yang sama dengan id_cabang.',
+                    'id_fakultas' => 'Fakultas yang dipilih tidak berasal dari cabang yang sama dengan gedung ini. Pastikan cabang gedung dan cabang fakultas sesuai.',
                 ]);
             }
         }
